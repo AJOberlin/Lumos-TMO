@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Ticket Form</title>
+    <style>
+        body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; padding: 20px; background-color: #f0f2f5; color: #333; }
+        .container { max-width: 750px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { font-size: 1.4rem; color: #1a73e8; border-bottom: 2px solid #e8eaed; padding-bottom: 10px; margin-top: 0; }
+
+        .type-selector { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 20px; align-items: center; }
+        .type-selector label { font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+        .common label { display: block; margin-top: 12px; font-weight: 600; font-size: 0.9rem; color: #5f6368; }
+        input[type="text"], textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #dadce0; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+        input:focus, textarea:focus { outline: none; border-color: #1a73e8; ring: 2px solid #c6dafc; }
+
+        .preview-area { margin-top: 30px; padding-top: 20px; border-top: 2px solid #e8eaed; }
+        #output_field { background-color: #202124; color: #e8eaed; font-family: 'Consolas', 'Monaco', monospace; line-height: 1.5; resize: none; }
+
+        .copy-btn { width: 100%; background-color: #1e8e3e; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+        .copy-btn:hover { background-color: #187230; }
+
+        /* Layout Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Support Ticket Form</h1>
+
+    <div class="type-selector">
+        <span>Ticket Type:</span>
+        <label><input type="radio" name="ticketType" value="Lumos" onclick="toggleLayout()" checked> Lumos</label>
+        <label><input type="radio" name="ticketType" value="TMO" onclick="toggleLayout()"> TMO</label>
+        <label><input type="radio" name="ticketType" value="Omnia" onclick="toggleLayout()"> Omnia</label>
+    </div>
+
+    <div id="standardFields" class="common">
+        <div class="grid-2">
+            <div>
+                <label>Caller</label>
+                <input type="text" id="caller" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>Account Name</label>
+                <input type="text" id="account_name" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>BAN-BTN</label>
+                <input type="text" id="ban_btn" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>Verified</label>
+                <input type="text" id="verified" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>CBN</label>
+                <input type="text" id="cbn" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>Active</label>
+                <input type="text" id="active" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>Market</label>
+                <input type="text" id="market" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>Router</label>
+                <input type="text" id="router" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>Modem</label>
+                <input type="text" id="modem" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>Issue</label>
+                <input type="text" id="issue" oninput="updatePreview()">
+            </div>
+        </div>
+        <label>TS Steps</label>
+        <textarea id="ts_steps" rows="4" oninput="updatePreview()"></textarea>
+    </div>
+
+    <div id="omniaFields" class="common" style="display:none;">
+        <label>Agent ID</label>
+        <input type="text" id="o_agent_id" value="500842" oninput="updatePreview()">
+
+        <label>Customer</label>
+        <input type="text" id="o_customer" oninput="updatePreview()">
+
+        <label>Contact</label>
+        <input type="text" id="o_contact" oninput="updatePreview()">
+
+        <label>Account</label>
+        <input type="text" id="o_account" oninput="updatePreview()">
+
+        <label>Address & Email</label>
+        <input type="text" id="o_verify" value="Verified on Account" oninput="updatePreview()">
+
+        <label>Notes</label>
+        <input type="text" id="o_notes" value="Playback Error" oninput="updatePreview()">
+
+        <div class="grid-2">
+            <div>
+                <label>L2</label>
+                <input type="text" id="o_l2" oninput="updatePreview()">
+            </div>
+            <div>
+                <label>ATS</label>
+                <input type="text" id="o_ats" oninput="updatePreview()">
+            </div>
+        </div>
+    </div>
+
+    <div class="preview-area">
+        <label>Copy Preview:</label>
+        <textarea id="output_field" rows="10" readonly></textarea>
+        <button type="button" class="copy-btn" onclick="copyFields()">Copy to Clipboard</button>
+    </div>
+</div>
+
+<script>
+    function toggleLayout() {
+        const type = document.querySelector('input[name="ticketType"]:checked').value;
+        const standard = document.getElementById("standardFields");
+        const omnia = document.getElementById("omniaFields");
+
+        if (type === "Omnia") {
+            standard.style.display = "none";
+            omnia.style.display = "block";
+        } else {
+            standard.style.display = "block";
+            omnia.style.display = "none";
+        }
+        updatePreview();
+    }
+
+    function updatePreview() {
+        const type = document.querySelector('input[name="ticketType"]:checked').value;
+        let output = "";
+
+        if (type === "Omnia") {
+            output += "Agent ID: " + document.getElementById("o_agent_id").value + "\n";
+            output += "Customer: " + document.getElementById("o_customer").value + "\n";
+            output += "Contact: " + document.getElementById("o_contact").value + "\n";
+            output += "Account: " + document.getElementById("o_account").value + "\n";
+            output += "Address&Email: " + document.getElementById("o_verify").value + "\n";
+            output += "Notes: " + document.getElementById("o_notes").value + "\n";
+            output += "L2: " + document.getElementById("o_l2").value + "\n";
+            output += "ATS: " + document.getElementById("o_ats").value;
+        } else {
+            const labels = ["Caller", "Account Name", "BAN-BTN", "Verified", "CBN", "Active", "Market", "Router", "Modem", "Issue"];
+            const ids = ["caller", "account_name", "ban_btn", "verified", "cbn", "active", "market", "router", "modem", "issue"];
+
+            output += `--- ${type} Ticket ---\n`;
+            ids.forEach((id, index) => {
+                output += `${labels[index]}: ${document.getElementById(id).value}\n`;
+            });
+            output += "TS Steps: " + document.getElementById("ts_steps").value;
+        }
+
+        document.getElementById("output_field").value = output;
+    }
+
+    function copyFields() {
+        const textArea = document.getElementById("output_field");
+        navigator.clipboard.writeText(textArea.value).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = "COPIED!";
+            btn.style.backgroundColor = "#1a73e8";
+            setTimeout(() => {
+                btn.innerText = "Copy to Clipboard";
+                btn.style.backgroundColor = "#1e8e3e";
+            }, 1500);
+        });
+    }
+
+    window.onload = updatePreview;
+</script>
+
+</body>
+</html>
