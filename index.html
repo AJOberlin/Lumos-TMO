@@ -5,16 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trouble Ticket Form</title>
 <style>
-.common label{
-display: block;
-margin-bottom: 5px
-}
-input[type="text"], textarea{
-width: 100%;
-padding: 8px;
-margin-bottom: 15px;
-box-sizing: border-box;
-}
+    body { font-family: sans-serif; font-size: 14px; padding: 10px; }
+    .common label { display: block; margin-bottom: 2px; font-weight: bold; }
+    input[type="text"], textarea {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    h1 { font-size: 18px; margin-top: 0; }
+    .preview-area { margin-top: 10px; border-top: 1px solid #ccc; pt: 10px; }
+    .copy-btn { width: 100%; padding: 10px; background: #1e8e3e; color: white; border: none; cursor: pointer; }
 </style>
 </head>
 
@@ -24,7 +26,7 @@ box-sizing: border-box;
     <h1>Support Ticket Form</h1>
 
     <div class="type-selector">
-        <span>Ticket Type:</span>
+        <span>Type:</span>
         <label><input type="radio" name="ticketType" value="Lumos" onclick="toggleLayout()" checked> Lumos</label>
         <label><input type="radio" name="ticketType" value="TMO" onclick="toggleLayout()"> TMO</label>
         <label><input type="radio" name="ticketType" value="Omnia" onclick="toggleLayout()"> Omnia</label>
@@ -33,52 +35,36 @@ box-sizing: border-box;
     <div id="standardFields" class="common">
         <div class="grid-2">
             <div><label>Caller</label><input type="text" id="caller" oninput="updatePreview()"></div>
-            <div><label>Account Name</label><input type="text" id="account_name" oninput="updatePreview()"></div>
+            <div><label>Account</label><input type="text" id="account_name" oninput="updatePreview()"></div>
             <div><label>BAN-BTN</label><input type="text" id="ban_btn" oninput="updatePreview()"></div>
             <div><label>Verified</label><input type="text" id="verified" oninput="updatePreview()"></div>
-            <div><label>CBN</label><input type="text" id="cbn" oninput="updatePreview()"></div>
-            <div><label>Active</label><input type="text" id="active" oninput="updatePreview()"></div>
-            <div><label>Market</label><input type="text" id="market" oninput="updatePreview()"></div>
-            <div><label>Router</label><input type="text" id="router" oninput="updatePreview()"></div>
-            <div><label>Modem</label><input type="text" id="modem" oninput="updatePreview()"></div>
-            <div><label>Issue</label><input type="text" id="issue" oninput="updatePreview()"></div>
         </div>
         <label>TS Steps</label>
-        <textarea id="ts_steps" rows="6" oninput="updatePreview()">1. &#10;2. &#10;3. &#10;4. &#10;5. </textarea>
+        <textarea id="ts_steps" rows="4" oninput="updatePreview()">1. &#10;2. &#10;3. </textarea>
     </div>
 
     <div id="omniaFields" class="common" style="display:none;">
         <label>Agent ID</label>
         <input type="text" id="o_agent_id" value="500842" oninput="updatePreview()">
-        <label>Customer</label>
-        <input type="text" id="o_customer" oninput="updatePreview()">
-        <label>Contact</label>
-        <input type="text" id="o_contact" oninput="updatePreview()">
-        <label>Account</label>
-        <input type="text" id="o_account" oninput="updatePreview()">
-        <label>Address & Email</label>
-        <input type="text" id="o_verify" value="Verified on Account" oninput="updatePreview()">
-        
         <label>Issue</label>
-        <input type="text" id="o_issue" placeholder="What is the issue?" oninput="updatePreview()">
-
+        <input type="text" id="o_issue" oninput="updatePreview()">
         <label>Notes</label>
-        <textarea id="o_notes" rows="6" oninput="updatePreview()">1. &#10;2. &#10;3. &#10;4. &#10;5. </textarea>
-        
-        <div class="grid-2">
-            <div><label>L2</label><input type="text" id="o_l2" oninput="updatePreview()"></div>
-            <div><label>ATS</label><input type="text" id="o_ats" oninput="updatePreview()"></div>
-        </div>
+        <textarea id="o_notes" rows="4" oninput="updatePreview()">1. &#10;2. </textarea>
     </div>
 
     <div class="preview-area">
-        <label>Copy Preview:</label>
-        <textarea id="output_field" rows="12" readonly></textarea>
+        <textarea id="output_field" rows="6" readonly></textarea>
         <button type="button" class="copy-btn" onclick="copyFields()">Copy to Clipboard</button>
     </div>
 </div>
 
 <script>
+    // Logic to resize and initialize
+    window.onload = function() {
+        window.resizeTo(500, 400);
+        updatePreview();
+    };
+
     function toggleLayout() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         document.getElementById("standardFields").style.display = (type === "Omnia") ? "none" : "block";
@@ -92,47 +78,28 @@ box-sizing: border-box;
 
         if (type === "Omnia") {
             output += "Agent ID: " + document.getElementById("o_agent_id").value + "\n";
-            output += "Customer: " + document.getElementById("o_customer").value + "\n";
-            output += "Contact: " + document.getElementById("o_contact").value + "\n";
-            output += "Account: " + document.getElementById("o_account").value + "\n";
-            output += "Address&Email: " + document.getElementById("o_verify").value + "\n";
             output += "Issue: " + document.getElementById("o_issue").value + "\n";
-            output += "Notes: \n" + document.getElementById("o_notes").value + "\n";
-            output += "L2: " + document.getElementById("o_l2").value + "\n";
-            output += "ATS: " + document.getElementById("o_ats").value;
+            output += "Notes: \n" + document.getElementById("o_notes").value;
         } else {
-            const labels = ["Caller", "Account Name", "BAN-BTN", "Verified", "CBN", "Active", "Market", "Router", "Modem", "Issue"];
-            const ids = ["caller", "account_name", "ban_btn", "verified", "cbn", "active", "market", "router", "modem", "issue"];
-            
+            const labels = ["Caller", "Account", "BAN-BTN", "Verified"];
+            const ids = ["caller", "account_name", "ban_btn", "verified"];
             output += `--- ${type} Ticket ---\n`;
             ids.forEach((id, index) => {
                 output += `${labels[index]}: ${document.getElementById(id).value}\n`;
             });
             output += "\nTS Steps:\n" + document.getElementById("ts_steps").value;
         }
-
         document.getElementById("output_field").value = output;
     }
 
     function copyFields() {
         const textArea = document.getElementById("output_field");
-        if (!textArea.value) return;
-
         navigator.clipboard.writeText(textArea.value).then(() => {
             const btn = document.querySelector('.copy-btn');
-            const originalText = btn.innerText;
             btn.innerText = "COPIED!";
-            btn.style.backgroundColor = "#1a73e8";
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.backgroundColor = "#1e8e3e";
-            }, 1500);
+            setTimeout(() => { btn.innerText = "Copy to Clipboard"; }, 1500);
         });
     }
-
-    window.onload = updatePreview;
 </script>
-
 </body>
 </html>
-
