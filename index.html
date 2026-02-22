@@ -36,13 +36,12 @@
         font-size: 14px;
     }
 
-    /* Horizontal row alignment for top fields */
     .row-4 { display: flex; gap: 15px; width: 100%; }
     .row-4 > div { flex: 1; }
 
     .quick-text-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
     .qt-btn { 
-        padding: 5px 12px; font-size: 12px; cursor: pointer; border-radius: 6px;
+        padding: 5px 12px; font-size: 11px; cursor: pointer; border-radius: 6px;
         border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text);
     }
     .qt-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(26, 115, 232, 0.1); }
@@ -51,8 +50,8 @@
     #output_field { height: 100px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 12px; background: var(--header-bg); }
 
     .btn-group { display: flex; gap: 12px; }
-    .copy-btn { flex: 3; padding: 15px; background: #1e8e3e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
-    .clear-btn { flex: 1; padding: 15px; background: #d93025; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
+    .copy-btn { flex: 3; padding: 15px; background: #1e8e3e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; }
+    .clear-btn { flex: 1; padding: 15px; background: #d93025; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; }
 </style>
 </head>
 
@@ -82,23 +81,28 @@
 
                 <label>Issue Category</label>
                 <div class="quick-text-group">
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDF- No Data Flow')">NDF- No Data Flow</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDT- No Dial Tone')">NDT- No Dial Tone</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Slow Speeds')">Slow Speeds</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Billing/CS')">Billing/CS</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDF- No Data Flow')">NDF</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDT- No Dial Tone')">NDT</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Slow Speeds')">Slow</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Billing/CS')">Billing</button>
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'Other: ')">Other</button>
                 </div>
                 <input type="text" id="issue" placeholder="Details of the issue...">
 
                 <label>Troubleshooting Steps Taken</label>
-                <textarea id="ts_steps" rows="6">1. &#10;2. &#10;3. &#10;4. &#10;5. </textarea>
+                <textarea id="ts_steps" rows="6" onkeydown="autoList(event, this)">1. </textarea>
+
+                <label>L2:</label>
+                <input type="text" id="l2_field" placeholder="Level 2 Details...">
 
                 <label>Final Resolution</label>
                 <div class="quick-text-group">
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'FCR')">FCR (First Call Resolution)</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer/Refer')">Transfer/Refer</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dispatched')">Dispatched</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">Escalated to T2</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'FCR')">FCR</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dropped/Ghost/Dead Air')">Dropped/Ghost</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Cognito form')">Cognito</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Update Escalation')">Update Esc</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to Sup')">Esc to Sup</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">T2</button>
                 </div>
                 <input type="text" id="res" placeholder="Outcome of the call...">
             </div>
@@ -106,24 +110,16 @@
             <div id="omniaFields" class="common" style="display:none;">
                 <label>Agent ID</label>
                 <input type="text" id="o_agent_id" value="500842">
-                
                 <label>Issue Description</label>
-                <div class="quick-text-group">
-                    <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDF- No Data Flow')">NDF</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDT- No Dial Tone')">NDT</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Slow Speeds')">Slow Speeds</button>
-                </div>
                 <input type="text" id="o_issue">
-                
                 <label>Call Notes & Resolution</label>
-                <textarea id="o_notes" rows="12">Resolution: &#10;1. &#10;2. &#10;3. &#10;4. </textarea>
+                <textarea id="o_notes" rows="12" onkeydown="autoList(event, this)">Resolution: &#10;1. </textarea>
             </div>
         </div>
     </form>
 
     <div class="preview-area">
-        <label style="font-weight:bold; margin-bottom:5px; display:block;">Copy-Paste Preview (Generated on Copy):</label>
-        <textarea id="output_field" readonly placeholder="Click 'Copy' to generate and save your notes..."></textarea>
+        <textarea id="output_field" readonly placeholder="Click 'Copy' to generate..."></textarea>
         <div class="btn-group">
             <button type="button" class="copy-btn" onclick="generateAndCopy()">COPY TO CLIPBOARD</button>
             <button type="button" class="clear-btn" onclick="resetForm()">CLEAR ALL</button>
@@ -138,6 +134,25 @@
         document.documentElement.setAttribute("data-theme", savedTheme);
         if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light Mode";
     };
+
+    function autoList(event, textarea) {
+        if (event.key === 'Enter') {
+            const cursorPosition = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+            const lines = textBeforeCursor.split('\n');
+            const lastLine = lines[lines.length - 1];
+            const match = lastLine.match(/^(\d+)\.\s/);
+            
+            if (match) {
+                event.preventDefault();
+                const nextNumber = parseInt(match[1]) + 1;
+                const newLine = `\n${nextNumber}. `;
+                const textAfterCursor = textarea.value.substring(cursorPosition);
+                textarea.value = textBeforeCursor + newLine + textAfterCursor;
+                textarea.selectionStart = textarea.selectionEnd = cursorPosition + newLine.length;
+            }
+        }
+    }
 
     function quickSet(id, val) {
         document.getElementById(id).value = val;
@@ -162,25 +177,46 @@
         let output = "";
 
         if (type === "Omnia") {
-            output += "Agent ID: " + document.getElementById("o_agent_id").value + "\n";
-            output += "Issue: " + document.getElementById("o_issue").value + "\n";
-            output += "Notes: \n" + document.getElementById("o_notes").value;
-        } else {
-            // Updated preview logic to keep Resolution at the end of the text block
-            const labels = ["Caller", "Account", "BAN-BTN", "Verified", "Issue"];
-            const ids = ["caller", "account_name", "ban_btn", "verified", "issue"];
-            output += `--- ${type} Ticket ---\n`;
-            ids.forEach((id, index) => { 
-                output += `${labels[index]}: ${document.getElementById(id).value}\n`; 
+            output += "--- Omnia Ticket ---\n";
+            const fields = [
+                { label: "Agent ID", value: document.getElementById("o_agent_id").value },
+                { label: "Issue", value: document.getElementById("o_issue").value },
+                { label: "Notes", value: document.getElementById("o_notes").value }
+            ];
+            fields.forEach(f => {
+                if (f.value.trim() !== "" && f.value !== "1. ") output += `${f.label}: ${f.value}\n`;
             });
-            output += "\nTS Steps:\n" + document.getElementById("ts_steps").value;
-            output += "\n\nResolution: " + document.getElementById("res").value;
+        } else {
+            output += `--- ${type} Ticket ---\n`;
+            const fields = [
+                { label: "Caller", value: document.getElementById("caller").value },
+                { label: "Account", value: document.getElementById("account_name").value },
+                { label: "BAN-BTN", value: document.getElementById("ban_btn").value },
+                { label: "Verified", value: document.getElementById("verified").value },
+                { label: "Issue", value: document.getElementById("issue").value },
+                { label: "TS Steps", value: document.getElementById("ts_steps").value },
+                { label: "L2", value: document.getElementById("l2_field").value },
+                { label: "Resolution", value: document.getElementById("res").value }
+            ];
+
+            fields.forEach(f => {
+                // Skips if field is empty or just the initial "1. " list marker
+                if (f.value.trim() !== "" && f.value !== "1. ") {
+                    if (f.label === "TS Steps") {
+                        output += `\nTS Steps:\n${f.value}\n`;
+                    } else if (f.label === "Resolution" || f.label === "L2") {
+                        output += `\n${f.label}: ${f.value}`;
+                    } else {
+                        output += `${f.label}: ${f.value}\n`;
+                    }
+                }
+            });
         }
 
         const previewBox = document.getElementById("output_field");
-        previewBox.value = output;
+        previewBox.value = output.trim();
 
-        navigator.clipboard.writeText(output).then(() => {
+        navigator.clipboard.writeText(output.trim()).then(() => {
             const btn = document.querySelector('.copy-btn');
             const old = btn.innerText; 
             btn.innerText = "COPIED SUCCESSFULLY!";
@@ -190,8 +226,8 @@
 
     function resetForm() {
         document.getElementById("ticketForm").reset();
-        document.getElementById("ts_steps").value = "1. \n2. \n3. \n4. \n5. ";
-        document.getElementById("o_notes").value = "Resolution: \n1. \n2. \n3. \n4. ";
+        document.getElementById("ts_steps").value = "1. ";
+        document.getElementById("o_notes").value = "Resolution: \n1. ";
         document.getElementById("o_agent_id").value = "500842";
         document.getElementById("output_field").value = ""; 
     }
