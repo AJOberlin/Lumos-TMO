@@ -15,37 +15,37 @@
     }
 
     html, body {
-        height: 100%; margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        height: 100%; margin: 0; font-family: sans-serif; 
         font-size: 12px; overflow: hidden; background-color: var(--bg); color: var(--text);
     }
 
     .container { display: flex; flex-direction: column; height: 100vh; padding: 8px; box-sizing: border-box; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-    h1 { font-size: 14px; margin: 0; font-weight: 600; }
+    h1 { font-size: 14px; margin: 0; }
     
     .theme-switch { cursor: pointer; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 9px; }
 
-    .scrollable-content { flex: 1; overflow-y: auto; padding-right: 4px; }
+    .scrollable-content { flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 5px; }
     .type-selector { margin-bottom: 8px; display: flex; gap: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--input-border); }
     
     .common label { display: block; margin-bottom: 1px; font-weight: bold; font-size: 11px; color: var(--accent); }
     input[type="text"], textarea {
-        width: 100%; padding: 5px; margin-bottom: 6px; box-sizing: border-box;
+        width: 100%; padding: 4px; margin-bottom: 5px; box-sizing: border-box;
         border: 1px solid var(--input-border); border-radius: 4px;
         background-color: var(--input-bg); color: var(--text);
     }
 
     .quick-text-group { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 5px; }
     .qt-btn { 
-        padding: 3px 6px; font-size: 10px; cursor: pointer; border-radius: 4px;
+        padding: 2px 5px; font-size: 10px; cursor: pointer; border-radius: 4px;
         border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text);
     }
     .qt-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
     .preview-area { border-top: 1px solid var(--preview-border); padding-top: 5px; background: var(--bg); }
-    #output_field { height: 42px; font-family: 'Courier New', monospace; font-size: 10px; margin-bottom: 5px; background: var(--header-bg); }
+    #output_field { height: 40px; font-family: monospace; font-size: 10px; margin-bottom: 5px; background: var(--header-bg); }
 
     .btn-group { display: flex; gap: 5px; }
     .copy-btn { flex: 2; padding: 8px; background: #1e8e3e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
@@ -64,7 +64,7 @@
     <div class="type-selector">
         <label><input type="radio" name="ticketType" value="Lumos" onclick="toggleLayout()" checked> Lumos</label>
         <label><input type="radio" name="ticketType" value="TMO" onclick="toggleLayout()"> TMO</label>
-        <label><input type="radio" name="ticketType" value="Omnia" onclick="toggleLayout()"> Omnia</label>
+        <label><input type="radio" name="ticketType" value="Omnia" onclick="toggleLayout()" > Omnia</label>
     </div>
 
     <form id="ticketForm" onsubmit="return false;">
@@ -106,11 +106,10 @@
                 <div class="quick-text-group">
                     <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDF- No Data Flow')">NDF</button>
                     <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Slow Speeds')">Slow</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Other: ')">Other</button>
                 </div>
                 <input type="text" id="o_issue" oninput="updatePreview()">
                 <label>Notes/Resolution</label>
-                <textarea id="o_notes" rows="5" oninput="updatePreview()">Resolution: &#10;1. &#10;2. </textarea>
+                <textarea id="o_notes" rows="4" oninput="updatePreview()">Resolution: &#10;1. &#10;2. </textarea>
             </div>
         </div>
     </form>
@@ -125,6 +124,15 @@
 </div>
 
 <script>
+    // Set for 500 Width x 400 Height
+    window.onload = () => {
+        window.resizeTo(500, 400);
+        const savedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+        if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light";
+        updatePreview();
+    };
+
     function quickSet(id, val) {
         document.getElementById(id).value = val;
         updatePreview();
@@ -136,9 +144,6 @@
         localStorage.setItem("theme", theme);
         document.getElementById("themeBtn").innerText = theme === "dark" ? "☀️ Light" : "🌙 Dark";
     }
-
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.setAttribute("data-theme", savedTheme);
 
     function toggleLayout() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
@@ -180,11 +185,6 @@
             updatePreview();
         }
     }
-
-    window.onload = () => {
-        if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light";
-        updatePreview();
-    };
 </script>
 </body>
 </html>
