@@ -48,6 +48,13 @@
         transition: 0.2s;
     }
     .qt-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(26, 115, 232, 0.1); }
+    
+    .qt-btn.active {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: white;
+        font-weight: bold;
+    }
 
     .preview-area { border-top: 1px solid var(--preview-border); padding-top: 15px; background: var(--bg); }
     #output_field { height: 100px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 12px; background: var(--header-bg); }
@@ -57,6 +64,7 @@
     .clear-btn { flex: 1; padding: 15px; background: #d93025; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; min-width: 100px; }
 
     .copyright-footer { width: 100%; text-align: center; font-size: 10px; opacity: 0.5; margin-top: 10px; }
+    .hidden { display: none; }
 </style>
 </head>
 
@@ -104,28 +112,32 @@
                 <input type="text" id="issue" autocomplete="off">
                 <label>Troubleshooting Steps Taken</label>
                 <textarea id="ts_steps" rows="6" onkeydown="autoList(event, this)">1. </textarea>
-                <label>L2:</label>
-                <input type="text" id="l2_field" autocomplete="off">
+                
                 <label>Final Resolution</label>
                 <div class="quick-text-group">
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'FCR')">FCR</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">Esc to T2</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer/Refer')">Transfer/Refer</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dispatched')">Dispatched</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Update Escalation')">Update Esc</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer to Sup')">Transfer to Sup</button>
+                    <button type="button" class="qt-btn" onclick="setRes('FCR')">FCR</button>
+                    <button type="button" class="qt-btn" onclick="setRes('Escalated to T2')">Esc to T2</button>
+                    <button type="button" class="qt-btn" onclick="setRes('Transfer/Refer')">Transfer/Refer</button>
+                    <button type="button" class="qt-btn" onclick="setRes('Dispatched')">Dispatched</button>
+                    <button type="button" class="qt-btn" onclick="setRes('Update Escalation')">Update Esc</button>
+                    <button type="button" class="qt-btn" onclick="setRes('Transfer to Sup')">Transfer to Sup</button>
                     <button type="button" class="qt-btn" onclick="handleCognito()">Cognito Sent</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dropped/Ghost/Dead Air')">Dropped/Ghost/Dead</button>
+                    <button type="button" class="qt-btn" onclick="setRes('Dropped/Ghost/Dead Air')">Dropped/Ghost/Dead</button>
                 </div>
                 <input type="text" id="res" autocomplete="off">
+
+                <div id="l2_container" class="hidden">
+                    <label>L2:</label>
+                    <input type="text" id="l2_field" autocomplete="off">
+                </div>
                 
                 <div style="margin-top: 10px;">
                     <label>Branded Call:</label>
                     <div class="quick-text-group">
-                        <button type="button" class="qt-btn" onclick="quickSet('branded_call', 'Yes')">Yes</button>
-                        <button type="button" class="qt-btn" onclick="quickSet('branded_call', 'No')">No</button>
+                        <button type="button" class="qt-btn bool-btn" data-group="branded" onclick="selectBool('branded_call', 'Yes', this)">Yes</button>
+                        <button type="button" class="qt-btn bool-btn" data-group="branded" onclick="selectBool('branded_call', 'No', this)">No</button>
                     </div>
-                    <input type="text" id="branded_call" readonly>
+                    <input type="hidden" id="branded_call">
                 </div>
             </div>
 
@@ -140,10 +152,10 @@
                     <div>
                         <label>Email & Address Confirmed:</label>
                         <div class="quick-text-group" style="margin-bottom: 0px;">
-                            <button type="button" class="qt-btn" onclick="quickSet('o_email_confirmed', 'Yes')">Yes</button>
-                            <button type="button" class="qt-btn" onclick="quickSet('o_email_confirmed', 'No')">No</button>
+                            <button type="button" class="qt-btn bool-btn" data-group="o_email" onclick="selectBool('o_email_confirmed', 'Yes', this)">Yes</button>
+                            <button type="button" class="qt-btn bool-btn" data-group="o_email" onclick="selectBool('o_email_confirmed', 'No', this)">No</button>
                         </div>
-                        <input type="text" id="o_email_confirmed" readonly>
+                        <input type="hidden" id="o_email_confirmed">
                     </div>
                 </div>
                 <label style="margin-top: 10px;">Notes</label>
@@ -164,10 +176,10 @@
                 <div style="margin-top: 10px;">
                     <label>Branded Call and Survey Offered:</label>
                     <div class="quick-text-group">
-                        <button type="button" class="qt-btn" onclick="quickSet('o_survey', 'Yes')">Yes</button>
-                        <button type="button" class="qt-btn" onclick="quickSet('o_survey', 'No')">No</button>
+                        <button type="button" class="qt-btn bool-btn" data-group="o_survey" onclick="selectBool('o_survey', 'Yes', this)">Yes</button>
+                        <button type="button" class="qt-btn bool-btn" data-group="o_survey" onclick="selectBool('o_survey', 'No', this)">No</button>
                     </div>
-                    <input type="text" id="o_survey" readonly>
+                    <input type="hidden" id="o_survey">
                 </div>
             </div>
         </div>
@@ -203,11 +215,30 @@
         document.getElementById(id).value = val;
     }
 
+    function selectBool(id, val, btn) {
+        document.getElementById(id).value = val;
+        const group = btn.getAttribute('data-group');
+        document.querySelectorAll(`.bool-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function setRes(val) {
+        const resInput = document.getElementById('res');
+        const l2Container = document.getElementById('l2_container');
+        const l2Input = document.getElementById('l2_field');
+        resInput.value = val;
+        const showL2 = ["Escalated to T2", "Dispatched", "Transfer to Sup"].includes(val);
+        if (showL2) {
+            l2Container.classList.remove('hidden');
+        } else {
+            l2Container.classList.add('hidden');
+            l2Input.value = "";
+        }
+    }
+
     function handleCognito() {
-        quickSet('res', 'Cognito Sent: CX advised of 24-48 Hour Callback Timeframe');
-        setTimeout(() => {
-            alert("Did you advise the customer of the 24-48 hour time frame?");
-        }, 100);
+        setRes('Cognito Sent: CX advised of 24-48 Hour Callback Timeframe');
+        setTimeout(() => { alert("Did you advise the customer of the 24-48 hour time frame?"); }, 100);
     }
 
     function generateAndCopy() {
@@ -240,6 +271,7 @@
             output += `--- ${type} Ticket ---\n`;
             fields.forEach(f => {
                 const val = document.getElementById(f.id).value;
+                if (f.id === "l2_field" && document.getElementById('l2_container').classList.contains('hidden')) return;
                 if (val.trim() !== "" && val !== "1. ") {
                     if (f.label === "TS Steps") output += `\nTS Steps:\n${val}\n`;
                     else if (f.label === "Resolution" || f.label === "L2" || f.label === "Branded Call") output += `\n${f.label}: ${val}`;
@@ -262,11 +294,10 @@
         document.getElementById("ticketForm").reset();
         document.getElementById("ts_steps").value = "1. ";
         document.getElementById("o_notes").value = "1. ";
-        document.getElementById("o_email_confirmed").value = "";
-        document.getElementById("o_res").value = "";
-        document.getElementById("o_survey").value = "";
-        document.getElementById("branded_call").value = "";
+        ["branded_call", "o_email_confirmed", "o_survey"].forEach(id => document.getElementById(id).value = "");
+        document.querySelectorAll('.bool-btn').forEach(b => b.classList.remove('active'));
         document.getElementById("output_field").value = "";
+        document.getElementById('l2_container').classList.add('hidden');
         const aid = localStorage.getItem('persistentAgentID');
         if (aid) document.getElementById('o_agent_id').value = aid;
     }
