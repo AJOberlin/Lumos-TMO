@@ -5,18 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trouble Ticket Form</title>
 <style>
-    body { font-family: sans-serif; font-size: 14px; padding: 10px; }
+    /* Makes the body take up the full window height without scrolling */
+    html, body {
+        height: 100%;
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 13px;
+        overflow: hidden; 
+    }
+
+    /* Main container uses Flexbox to organize layout */
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    /* The middle section becomes scrollable */
+    .scrollable-content {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 5px;
+        margin-bottom: 10px;
+    }
+
+    h1 { font-size: 16px; margin: 0 0 10px 0; color: #333; }
+    .type-selector { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #eee; }
+    
     .common label { display: block; margin-bottom: 2px; font-weight: bold; }
     input[type="text"], textarea {
         width: 100%;
-        padding: 5px;
-        margin-bottom: 10px;
+        padding: 6px;
+        margin-bottom: 8px;
         box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
     }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    h1 { font-size: 18px; margin-top: 0; }
-    .preview-area { margin-top: 10px; border-top: 1px solid #ccc; pt: 10px; }
-    .copy-btn { width: 100%; padding: 10px; background: #1e8e3e; color: white; border: none; cursor: pointer; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* Preview area stays "stuck" to the bottom */
+    .preview-area {
+        border-top: 2px solid #ddd;
+        padding-top: 10px;
+        background: white;
+    }
+
+    #output_field { height: 60px; font-family: monospace; font-size: 11px; }
+
+    .copy-btn {
+        width: 100%;
+        padding: 10px;
+        background: #1e8e3e;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
 </style>
 </head>
 
@@ -26,45 +74,40 @@
     <h1>Support Ticket Form</h1>
 
     <div class="type-selector">
-        <span>Type:</span>
         <label><input type="radio" name="ticketType" value="Lumos" onclick="toggleLayout()" checked> Lumos</label>
         <label><input type="radio" name="ticketType" value="TMO" onclick="toggleLayout()"> TMO</label>
         <label><input type="radio" name="ticketType" value="Omnia" onclick="toggleLayout()"> Omnia</label>
     </div>
 
-    <div id="standardFields" class="common">
-        <div class="grid-2">
-            <div><label>Caller</label><input type="text" id="caller" oninput="updatePreview()"></div>
-            <div><label>Account</label><input type="text" id="account_name" oninput="updatePreview()"></div>
-            <div><label>BAN-BTN</label><input type="text" id="ban_btn" oninput="updatePreview()"></div>
-            <div><label>Verified</label><input type="text" id="verified" oninput="updatePreview()"></div>
+    <div class="scrollable-content">
+        <div id="standardFields" class="common">
+            <div class="grid-2">
+                <div><label>Caller</label><input type="text" id="caller" oninput="updatePreview()"></div>
+                <div><label>Account</label><input type="text" id="account_name" oninput="updatePreview()"></div>
+                <div><label>BAN-BTN</label><input type="text" id="ban_btn" oninput="updatePreview()"></div>
+                <div><label>Verified</label><input type="text" id="verified" oninput="updatePreview()"></div>
+            </div>
+            <label>TS Steps</label>
+            <textarea id="ts_steps" rows="5" oninput="updatePreview()">1. &#10;2. &#10;3. </textarea>
         </div>
-        <label>TS Steps</label>
-        <textarea id="ts_steps" rows="4" oninput="updatePreview()">1. &#10;2. &#10;3. </textarea>
-    </div>
 
-    <div id="omniaFields" class="common" style="display:none;">
-        <label>Agent ID</label>
-        <input type="text" id="o_agent_id" value="500842" oninput="updatePreview()">
-        <label>Issue</label>
-        <input type="text" id="o_issue" oninput="updatePreview()">
-        <label>Notes</label>
-        <textarea id="o_notes" rows="4" oninput="updatePreview()">1. &#10;2. </textarea>
+        <div id="omniaFields" class="common" style="display:none;">
+            <label>Agent ID</label>
+            <input type="text" id="o_agent_id" value="500842" oninput="updatePreview()">
+            <label>Issue</label>
+            <input type="text" id="o_issue" oninput="updatePreview()">
+            <label>Notes</label>
+            <textarea id="o_notes" rows="5" oninput="updatePreview()">1. &#10;2. </textarea>
+        </div>
     </div>
 
     <div class="preview-area">
-        <textarea id="output_field" rows="6" readonly></textarea>
+        <textarea id="output_field" readonly placeholder="Preview will appear here..."></textarea>
         <button type="button" class="copy-btn" onclick="copyFields()">Copy to Clipboard</button>
     </div>
 </div>
 
 <script>
-    // Logic to resize and initialize
-    window.onload = function() {
-        window.resizeTo(500, 400);
-        updatePreview();
-    };
-
     function toggleLayout() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         document.getElementById("standardFields").style.display = (type === "Omnia") ? "none" : "block";
@@ -100,6 +143,8 @@
             setTimeout(() => { btn.innerText = "Copy to Clipboard"; }, 1500);
         });
     }
+
+    window.onload = updatePreview;
 </script>
 </body>
 </html>
