@@ -40,7 +40,6 @@
     .qt-btn { 
         padding: 5px 12px; font-size: 12px; cursor: pointer; border-radius: 6px;
         border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text);
-        transition: all 0.2s;
     }
     .qt-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(26, 115, 232, 0.1); }
 
@@ -73,10 +72,10 @@
         <div class="scrollable-content">
             <div id="standardFields" class="common">
                 <div class="grid-2">
-                    <div><label>Caller Name</label><input type="text" id="caller" oninput="updatePreview()"></div>
-                    <div><label>Account Name</label><input type="text" id="account_name" oninput="updatePreview()"></div>
-                    <div><label>BAN-BTN</label><input type="text" id="ban_btn" oninput="updatePreview()"></div>
-                    <div><label>Verification Status</label><input type="text" id="verified" oninput="updatePreview()"></div>
+                    <div><label>Caller Name</label><input type="text" id="caller"></div>
+                    <div><label>Account Name</label><input type="text" id="account_name"></div>
+                    <div><label>BAN-BTN</label><input type="text" id="ban_btn"></div>
+                    <div><label>Verification Status</label><input type="text" id="verified"></div>
                 </div>
 
                 <label>Issue Category</label>
@@ -87,7 +86,7 @@
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'Billing/CS')">Billing/CS</button>
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'Other: ')">Other</button>
                 </div>
-                <input type="text" id="issue" placeholder="Details of the issue..." oninput="updatePreview()">
+                <input type="text" id="issue" placeholder="Details of the issue...">
 
                 <label>Final Resolution</label>
                 <div class="quick-text-group">
@@ -96,15 +95,15 @@
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Dispatched')">Dispatched</button>
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">Escalated to T2</button>
                 </div>
-                <input type="text" id="res" placeholder="Outcome of the call..." oninput="updatePreview()">
+                <input type="text" id="res" placeholder="Outcome of the call...">
 
                 <label>Troubleshooting Steps Taken</label>
-                <textarea id="ts_steps" rows="8" oninput="updatePreview()">1. &#10;2. &#10;3. &#10;4. &#10;5. </textarea>
+                <textarea id="ts_steps" rows="8">1. &#10;2. &#10;3. &#10;4. &#10;5. </textarea>
             </div>
 
             <div id="omniaFields" class="common" style="display:none;">
                 <label>Agent ID</label>
-                <input type="text" id="o_agent_id" value="500842" oninput="updatePreview()">
+                <input type="text" id="o_agent_id" value="500842">
                 
                 <label>Issue Description</label>
                 <div class="quick-text-group">
@@ -112,37 +111,34 @@
                     <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDT- No Dial Tone')">NDT</button>
                     <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Slow Speeds')">Slow Speeds</button>
                 </div>
-                <input type="text" id="o_issue" oninput="updatePreview()">
+                <input type="text" id="o_issue">
                 
                 <label>Call Notes & Resolution</label>
-                <textarea id="o_notes" rows="12" oninput="updatePreview()">Resolution: &#10;1. &#10;2. &#10;3. &#10;4. </textarea>
+                <textarea id="o_notes" rows="12">Resolution: &#10;1. &#10;2. &#10;3. &#10;4. </textarea>
             </div>
         </div>
     </form>
 
     <div class="preview-area">
-        <label style="font-weight:bold; margin-bottom:5px; display:block;">Copy-Paste Preview:</label>
-        <textarea id="output_field" readonly placeholder="Your ticket text will appear here..."></textarea>
+        <label style="font-weight:bold; margin-bottom:5px; display:block;">Copy-Paste Preview (Generated on Copy):</label>
+        <textarea id="output_field" readonly placeholder="Click 'Copy' to generate and save your notes..."></textarea>
         <div class="btn-group">
-            <button type="button" class="copy-btn" onclick="copyFields()">COPY TO CLIPBOARD</button>
+            <button type="button" class="copy-btn" onclick="generateAndCopy()">COPY TO CLIPBOARD</button>
             <button type="button" class="clear-btn" onclick="resetForm()">CLEAR ALL</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Initialize at 800x800
     window.onload = () => {
         window.resizeTo(800, 800);
         const savedTheme = localStorage.getItem("theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
         if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light Mode";
-        updatePreview();
     };
 
     function quickSet(id, val) {
         document.getElementById(id).value = val;
-        updatePreview();
     }
 
     function toggleTheme() {
@@ -156,12 +152,13 @@
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         document.getElementById("standardFields").style.display = (type === "Omnia") ? "none" : "block";
         document.getElementById("omniaFields").style.display = (type === "Omnia") ? "block" : "none";
-        updatePreview();
+        document.getElementById("output_field").value = ""; 
     }
 
-    function updatePreview() {
+    function generateAndCopy() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         let output = "";
+
         if (type === "Omnia") {
             output += "Agent ID: " + document.getElementById("o_agent_id").value + "\n";
             output += "Issue: " + document.getElementById("o_issue").value + "\n";
@@ -175,26 +172,25 @@
             });
             output += "\nTS Steps:\n" + document.getElementById("ts_steps").value;
         }
-        document.getElementById("output_field").value = output;
-    }
 
-    function copyFields() {
-        const textArea = document.getElementById("output_field");
-        navigator.clipboard.writeText(textArea.value).then(() => {
+        const previewBox = document.getElementById("output_field");
+        previewBox.value = output;
+
+        navigator.clipboard.writeText(output).then(() => {
             const btn = document.querySelector('.copy-btn');
-            const old = btn.innerText; btn.innerText = "COPIED SUCCESSFULLY!";
+            const old = btn.innerText; 
+            btn.innerText = "COPIED SUCCESSFULLY!";
             setTimeout(() => { btn.innerText = old; }, 1500);
         });
     }
 
     function resetForm() {
-        if (confirm("This will wipe all current notes. Proceed?")) {
-            document.getElementById("ticketForm").reset();
-            document.getElementById("ts_steps").value = "1. \n2. \n3. \n4. \n5. ";
-            document.getElementById("o_notes").value = "Resolution: \n1. \n2. \n3. \n4. ";
-            document.getElementById("o_agent_id").value = "500842";
-            updatePreview();
-        }
+        // Warning removed as requested
+        document.getElementById("ticketForm").reset();
+        document.getElementById("ts_steps").value = "1. \n2. \n3. \n4. \n5. ";
+        document.getElementById("o_notes").value = "Resolution: \n1. \n2. \n3. \n4. ";
+        document.getElementById("o_agent_id").value = "500842";
+        document.getElementById("output_field").value = ""; 
     }
 </script>
 </body>
