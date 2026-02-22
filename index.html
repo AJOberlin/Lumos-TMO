@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Support Ticket Pro</title>
+<title>Support Ticket Pro - 800x800</title>
 <style>
     :root {
         --bg: #ffffff; --text: #333; --input-bg: #fff; --input-border: #ccc;
@@ -16,40 +16,42 @@
 
     html, body {
         height: 100%; margin: 0; font-family: sans-serif; 
-        font-size: 12px; overflow: hidden; background-color: var(--bg); color: var(--text);
+        font-size: 14px; overflow: hidden; background-color: var(--bg); color: var(--text);
     }
 
-    .container { display: flex; flex-direction: column; height: 100vh; padding: 8px; box-sizing: border-box; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-    h1 { font-size: 14px; margin: 0; }
+    .container { display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    h1 { font-size: 20px; margin: 0; }
     
-    .theme-switch { cursor: pointer; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 9px; }
+    .theme-switch { cursor: pointer; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 12px; }
 
-    .scrollable-content { flex: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 5px; }
-    .type-selector { margin-bottom: 8px; display: flex; gap: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--input-border); }
+    .scrollable-content { flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
+    .type-selector { margin-bottom: 15px; display: flex; gap: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--input-border); font-size: 15px; }
     
-    .common label { display: block; margin-bottom: 1px; font-weight: bold; font-size: 11px; color: var(--accent); }
+    .common label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; color: var(--accent); }
     input[type="text"], textarea {
-        width: 100%; padding: 4px; margin-bottom: 5px; box-sizing: border-box;
-        border: 1px solid var(--input-border); border-radius: 4px;
+        width: 100%; padding: 10px; margin-bottom: 12px; box-sizing: border-box;
+        border: 1px solid var(--input-border); border-radius: 6px;
         background-color: var(--input-bg); color: var(--text);
+        font-size: 14px;
     }
 
-    .quick-text-group { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 5px; }
+    .quick-text-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
     .qt-btn { 
-        padding: 2px 5px; font-size: 10px; cursor: pointer; border-radius: 4px;
+        padding: 5px 12px; font-size: 12px; cursor: pointer; border-radius: 6px;
         border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text);
+        transition: all 0.2s;
     }
-    .qt-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .qt-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(26, 115, 232, 0.1); }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-    .preview-area { border-top: 1px solid var(--preview-border); padding-top: 5px; background: var(--bg); }
-    #output_field { height: 40px; font-family: monospace; font-size: 10px; margin-bottom: 5px; background: var(--header-bg); }
+    .preview-area { border-top: 1px solid var(--preview-border); padding-top: 15px; background: var(--bg); }
+    #output_field { height: 120px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 12px; background: var(--header-bg); }
 
-    .btn-group { display: flex; gap: 5px; }
-    .copy-btn { flex: 2; padding: 8px; background: #1e8e3e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-    .clear-btn { flex: 1; padding: 8px; background: #d93025; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-group { display: flex; gap: 12px; }
+    .copy-btn { flex: 3; padding: 15px; background: #1e8e3e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
+    .clear-btn { flex: 1; padding: 15px; background: #d93025; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
 </style>
 </head>
 
@@ -57,79 +59,84 @@
 
 <div class="container">
     <header>
-        <h1>Ticket Form</h1>
-        <button class="theme-switch" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+        <h1>Support Ticket Pro</h1>
+        <button class="theme-switch" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
     </header>
 
     <div class="type-selector">
         <label><input type="radio" name="ticketType" value="Lumos" onclick="toggleLayout()" checked> Lumos</label>
         <label><input type="radio" name="ticketType" value="TMO" onclick="toggleLayout()"> TMO</label>
-        <label><input type="radio" name="ticketType" value="Omnia" onclick="toggleLayout()" > Omnia</label>
+        <label><input type="radio" name="ticketType" value="Omnia" onclick="toggleLayout()"> Omnia</label>
     </div>
 
     <form id="ticketForm" onsubmit="return false;">
         <div class="scrollable-content">
             <div id="standardFields" class="common">
                 <div class="grid-2">
-                    <div><label>Caller</label><input type="text" id="caller" oninput="updatePreview()"></div>
-                    <div><label>Account</label><input type="text" id="account_name" oninput="updatePreview()"></div>
+                    <div><label>Caller Name</label><input type="text" id="caller" oninput="updatePreview()"></div>
+                    <div><label>Account Name</label><input type="text" id="account_name" oninput="updatePreview()"></div>
                     <div><label>BAN-BTN</label><input type="text" id="ban_btn" oninput="updatePreview()"></div>
-                    <div><label>Verified</label><input type="text" id="verified" oninput="updatePreview()"></div>
+                    <div><label>Verification Status</label><input type="text" id="verified" oninput="updatePreview()"></div>
                 </div>
 
-                <label>Issue</label>
+                <label>Issue Category</label>
                 <div class="quick-text-group">
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDF- No Data Flow')">NDF</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDT- No Dial Tone')">NDT</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Slow Speeds')">Slow</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDF- No Data Flow')">NDF- No Data Flow</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDT- No Dial Tone')">NDT- No Dial Tone</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Slow Speeds')">Slow Speeds</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Billing/CS')">Billing/CS</button>
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'Other: ')">Other</button>
                 </div>
-                <input type="text" id="issue" oninput="updatePreview()">
+                <input type="text" id="issue" placeholder="Details of the issue..." oninput="updatePreview()">
 
-                <label>Resolution</label>
+                <label>Final Resolution</label>
                 <div class="quick-text-group">
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'FCR')">FCR</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer/Refer')">Ref</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dispatched')">Disp</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">T2</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'FCR')">FCR (First Call Resolution)</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer/Refer')">Transfer/Refer</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dispatched')">Dispatched</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">Escalated to T2</button>
                 </div>
-                <input type="text" id="res" oninput="updatePreview()">
+                <input type="text" id="res" placeholder="Outcome of the call..." oninput="updatePreview()">
 
-                <label>TS Steps</label>
-                <textarea id="ts_steps" rows="3" oninput="updatePreview()">1. &#10;2. &#10;3. </textarea>
+                <label>Troubleshooting Steps Taken</label>
+                <textarea id="ts_steps" rows="8" oninput="updatePreview()">1. &#10;2. &#10;3. &#10;4. &#10;5. </textarea>
             </div>
 
             <div id="omniaFields" class="common" style="display:none;">
                 <label>Agent ID</label>
                 <input type="text" id="o_agent_id" value="500842" oninput="updatePreview()">
-                <label>Issue</label>
+                
+                <label>Issue Description</label>
                 <div class="quick-text-group">
                     <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDF- No Data Flow')">NDF</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Slow Speeds')">Slow</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDT- No Dial Tone')">NDT</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Slow Speeds')">Slow Speeds</button>
                 </div>
                 <input type="text" id="o_issue" oninput="updatePreview()">
-                <label>Notes/Resolution</label>
-                <textarea id="o_notes" rows="4" oninput="updatePreview()">Resolution: &#10;1. &#10;2. </textarea>
+                
+                <label>Call Notes & Resolution</label>
+                <textarea id="o_notes" rows="12" oninput="updatePreview()">Resolution: &#10;1. &#10;2. &#10;3. &#10;4. </textarea>
             </div>
         </div>
     </form>
 
     <div class="preview-area">
-        <textarea id="output_field" readonly placeholder="Preview..."></textarea>
+        <label style="font-weight:bold; margin-bottom:5px; display:block;">Copy-Paste Preview:</label>
+        <textarea id="output_field" readonly placeholder="Your ticket text will appear here..."></textarea>
         <div class="btn-group">
-            <button type="button" class="copy-btn" onclick="copyFields()">Copy</button>
-            <button type="button" class="clear-btn" onclick="resetForm()">Clear</button>
+            <button type="button" class="copy-btn" onclick="copyFields()">COPY TO CLIPBOARD</button>
+            <button type="button" class="clear-btn" onclick="resetForm()">CLEAR ALL</button>
         </div>
     </div>
 </div>
 
 <script>
-    // Set for 500 Width x 400 Height
+    // Initialize at 800x800
     window.onload = () => {
-        window.resizeTo(500, 400);
+        window.resizeTo(800, 800);
         const savedTheme = localStorage.getItem("theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
-        if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light";
+        if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light Mode";
         updatePreview();
     };
 
@@ -142,7 +149,7 @@
         const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
         document.documentElement.setAttribute("data-theme", theme);
         localStorage.setItem("theme", theme);
-        document.getElementById("themeBtn").innerText = theme === "dark" ? "☀️ Light" : "🌙 Dark";
+        document.getElementById("themeBtn").innerText = theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
     }
 
     function toggleLayout() {
@@ -156,12 +163,16 @@
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         let output = "";
         if (type === "Omnia") {
-            output += "Agent ID: " + document.getElementById("o_agent_id").value + "\nIssue: " + document.getElementById("o_issue").value + "\n" + document.getElementById("o_notes").value;
+            output += "Agent ID: " + document.getElementById("o_agent_id").value + "\n";
+            output += "Issue: " + document.getElementById("o_issue").value + "\n";
+            output += "Notes: \n" + document.getElementById("o_notes").value;
         } else {
             const labels = ["Caller", "Account", "BAN-BTN", "Verified", "Issue", "Resolution"];
             const ids = ["caller", "account_name", "ban_btn", "verified", "issue", "res"];
             output += `--- ${type} Ticket ---\n`;
-            ids.forEach((id, index) => { output += `${labels[index]}: ${document.getElementById(id).value}\n`; });
+            ids.forEach((id, index) => { 
+                output += `${labels[index]}: ${document.getElementById(id).value}\n`; 
+            });
             output += "\nTS Steps:\n" + document.getElementById("ts_steps").value;
         }
         document.getElementById("output_field").value = output;
@@ -171,16 +182,16 @@
         const textArea = document.getElementById("output_field");
         navigator.clipboard.writeText(textArea.value).then(() => {
             const btn = document.querySelector('.copy-btn');
-            const old = btn.innerText; btn.innerText = "COPIED!";
-            setTimeout(() => { btn.innerText = old; }, 1000);
+            const old = btn.innerText; btn.innerText = "COPIED SUCCESSFULLY!";
+            setTimeout(() => { btn.innerText = old; }, 1500);
         });
     }
 
     function resetForm() {
-        if (confirm("Clear form?")) {
+        if (confirm("This will wipe all current notes. Proceed?")) {
             document.getElementById("ticketForm").reset();
-            document.getElementById("ts_steps").value = "1. \n2. \n3. ";
-            document.getElementById("o_notes").value = "Resolution: \n1. \n2. ";
+            document.getElementById("ts_steps").value = "1. \n2. \n3. \n4. \n5. ";
+            document.getElementById("o_notes").value = "Resolution: \n1. \n2. \n3. \n4. ";
             document.getElementById("o_agent_id").value = "500842";
             updatePreview();
         }
