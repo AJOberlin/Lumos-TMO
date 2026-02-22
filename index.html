@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Support Ticket Pro - Secure Edition</title>
+<title>Support Ticket Pro - 800x800</title>
 <style>
     :root {
         --bg: #ffffff; --text: #333; --input-bg: #fff; --input-border: #ccc;
-        --header-bg: #f8f9fa; --preview-border: #ddd; --accent: #1a73e8; --secure: #1e8e3e;
+        --header-bg: #f8f9fa; --preview-border: #ddd; --accent: #1a73e8;
     }
     [data-theme="dark"] {
         --bg: #1e1e1e; --text: #e0e0e0; --input-bg: #2d2d2d;
@@ -21,16 +21,16 @@
     }
 
     .container { display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--secure); padding-bottom: 10px; }
-    h1 { font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+    h1 { font-size: 20px; margin: 0; }
     
     .header-btns { display: flex; gap: 8px; }
-    .header-btn { cursor: pointer; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 11px; font-weight: bold; }
+    .header-btn { cursor: pointer; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 12px; font-weight: bold; }
 
     .scrollable-content { flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
-    .type-selector { margin-bottom: 15px; display: flex; gap: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--input-border); }
+    .type-selector { margin-bottom: 15px; display: flex; gap: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--input-border); font-size: 15px; }
     
-    .common label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 12px; color: var(--accent); }
+    .common label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; color: var(--accent); }
     input[type="text"], textarea {
         width: 100%; padding: 10px; margin-bottom: 12px; box-sizing: border-box;
         border: 1px solid var(--input-border); border-radius: 6px;
@@ -42,13 +42,13 @@
     .row-4 > div { flex: 1; }
 
     .preview-area { border-top: 1px solid var(--preview-border); padding-top: 15px; background: var(--bg); }
-    #output_field { height: 60px; font-family: monospace; font-size: 12px; background: var(--header-bg); }
+    #output_field { height: 100px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 12px; background: var(--header-bg); }
 
-    .btn-group { display: flex; gap: 12px; margin-top: 10px; }
-    .copy-btn { flex: 3; padding: 15px; background: var(--secure); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
-    .clear-btn { flex: 1; padding: 15px; background: #d93025; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; }
+    .btn-group { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .copy-btn { flex: 3; padding: 15px; background: #1e8e3e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; min-width: 200px; }
+    .clear-btn { flex: 1; padding: 15px; background: #d93025; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; min-width: 100px; }
 
-    footer { display: flex; justify-content: space-between; font-size: 10px; opacity: 0.5; padding-top: 10px; }
+    .copyright-footer { width: 100%; text-align: center; font-size: 10px; opacity: 0.5; margin-top: 10px; }
 </style>
 </head>
 
@@ -56,7 +56,7 @@
 
 <div class="container">
     <header>
-        <h1>🛡️ Support Ticket Pro <small style="font-size: 10px; color: var(--secure);">SECURE SESSION</small></h1>
+        <h1>Support Ticket Pro</h1>
         <div class="header-btns">
             <button class="header-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
         </div>
@@ -79,12 +79,12 @@
                 </div>
                 <label>Issue</label>
                 <input type="text" id="issue" autocomplete="off">
-                <label>Troubleshooting Steps</label>
+                <label>Troubleshooting Steps Taken</label>
                 <textarea id="ts_steps" rows="6" onkeydown="autoList(event, this)">1. </textarea>
-                <div class="row-4">
-                    <div><label>L2:</label><input type="text" id="l2_field" autocomplete="off"></div>
-                    <div><label>Resolution:</label><input type="text" id="res" autocomplete="off"></div>
-                </div>
+                <label>L2:</label>
+                <input type="text" id="l2_field" autocomplete="off">
+                <label>Final Resolution</label>
+                <input type="text" id="res" autocomplete="off">
             </div>
 
             <div id="omniaFields" class="common" style="display:none;">
@@ -108,20 +108,18 @@
     </form>
 
     <div class="preview-area">
-        <textarea id="output_field" readonly placeholder="Data visible only after clicking copy..."></textarea>
+        <textarea id="output_field" readonly placeholder="Click 'Copy' to generate..."></textarea>
         <div class="btn-group">
-            <button type="button" class="copy-btn" onclick="generateAndCopy()">COPY & SECURE SESSION</button>
+            <button type="button" class="copy-btn" onclick="generateAndCopy()">COPY TO CLIPBOARD</button>
             <button type="button" class="clear-btn" onclick="resetForm()">CLEAR ALL</button>
+            <div class="copyright-footer">
+                &copy; 2026 Aaron Mata Abrego. All Rights Reserved. Private Internal Tool.
+            </div>
         </div>
-        <footer>
-            <span>&copy; 2026 Aaron Mata Abrego. All Rights Reserved.</span>
-            <span id="secureLabel" style="color: var(--secure);">SESSION SECURED</span>
-        </footer>
     </div>
 </div>
 
 <script>
-    // Block DevTools
     document.onkeydown = function(e) {
         if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
     };
@@ -131,7 +129,6 @@
         const savedTheme = localStorage.getItem("theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
         if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light Mode";
-        
         const savedAgentID = localStorage.getItem('persistentAgentID');
         if (savedAgentID) document.getElementById('o_agent_id').value = savedAgentID;
     };
@@ -162,25 +159,21 @@
             output += `--- ${type} Ticket ---\n`;
             fields.forEach(f => {
                 const val = document.getElementById(f.id).value;
-                if (val.trim() !== "" && val !== "1. ") output += `${f.label}: ${val}\n`;
+                if (val.trim() !== "" && val !== "1. ") {
+                    if (f.label === "TS Steps") output += `\nTS Steps:\n${val}\n`;
+                    else if (f.label === "Resolution" || f.label === "L2") output += `\n${f.label}: ${val}`;
+                    else output += `${f.label}: ${val}\n`;
+                }
             });
         }
 
         document.getElementById("output_field").value = output.trim();
         navigator.clipboard.writeText(output.trim()).then(() => {
             const btn = document.querySelector('.copy-btn');
-            
-            // Save Persistent data
+            const old = btn.innerText;
+            btn.innerText = "COPIED SUCCESSFULLY!";
             localStorage.setItem('persistentAgentID', document.getElementById('o_agent_id').value);
-            
-            // Wipe Instantly
-            resetForm();
-            
-            // Feedback
-            btn.innerText = "COPIED & WIPED!";
-            setTimeout(() => {
-                btn.innerText = "COPY & SECURE SESSION";
-            }, 1000);
+            setTimeout(() => { btn.innerText = old; }, 1500);
         });
     }
 
