@@ -41,6 +41,14 @@
     .row-4 { display: flex; gap: 15px; width: 100%; }
     .row-4 > div { flex: 1; }
 
+    .quick-text-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .qt-btn { 
+        padding: 5px 12px; font-size: 11px; cursor: pointer; border-radius: 6px;
+        border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text);
+        transition: 0.2s;
+    }
+    .qt-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(26, 115, 232, 0.1); }
+
     .preview-area { border-top: 1px solid var(--preview-border); padding-top: 15px; background: var(--bg); }
     #output_field { height: 100px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 12px; background: var(--header-bg); }
 
@@ -77,14 +85,44 @@
                     <div><label>BAN-BTN</label><input type="text" id="ban_btn" autocomplete="off"></div>
                     <div><label>Verification</label><input type="text" id="verified" autocomplete="off"></div>
                 </div>
+
+                <label>Market</label>
+                <div class="quick-text-group">
+                    <button type="button" class="qt-btn" onclick="quickSet('market', 'Lumos NC')">Lumos NC</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('market', 'Lumos VA')">Lumos VA</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('market', 'TMO')">TMO</button>
+                </div>
+                <input type="text" id="market" autocomplete="off" placeholder="Select market...">
+
                 <label>Issue</label>
-                <input type="text" id="issue" autocomplete="off">
+                <div class="quick-text-group">
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDF-No Data Flow')">NDF</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDT-No Dial Tone')">NDT</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Slow Speeds')">Slow Speeds</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Intermittent Connection')">Intermittent</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Phone')">Phone</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Billing/CS')">Billing/CS</button>
+                </div>
+                <input type="text" id="issue" autocomplete="off" placeholder="Select issue...">
+
                 <label>Troubleshooting Steps Taken</label>
                 <textarea id="ts_steps" rows="6" onkeydown="autoList(event, this)">1. </textarea>
+                
                 <label>L2:</label>
                 <input type="text" id="l2_field" autocomplete="off">
+                
                 <label>Final Resolution</label>
-                <input type="text" id="res" autocomplete="off">
+                <div class="quick-text-group">
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'FCR')">FCR</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">Esc to T2</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer/Refer')">Transfer/Refer</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dispatched')">Dispatched</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Update Escalation')">Update Esc</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer to Sup')">Transfer to Sup</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Cognito Sent')">Cognito Sent</button>
+                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Dropped/Ghost/Dead Air')">Dropped/Ghost/Dead</button>
+                </div>
+                <input type="text" id="res" autocomplete="off" placeholder="Select resolution...">
             </div>
 
             <div id="omniaFields" class="common" style="display:none;">
@@ -133,6 +171,10 @@
         if (savedAgentID) document.getElementById('o_agent_id').value = savedAgentID;
     };
 
+    function quickSet(id, val) {
+        document.getElementById(id).value = val;
+    }
+
     function generateAndCopy() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         let output = "";
@@ -153,8 +195,9 @@
             const fields = [
                 { label: "Caller", id: "caller" }, { label: "Account", id: "account_name" },
                 { label: "BAN-BTN", id: "ban_btn" }, { label: "Verified", id: "verified" },
-                { label: "Issue", id: "issue" }, { label: "TS Steps", id: "ts_steps" },
-                { label: "L2", id: "l2_field" }, { label: "Resolution", id: "res" }
+                { label: "Market", id: "market" }, { label: "Issue", id: "issue" }, 
+                { label: "TS Steps", id: "ts_steps" }, { label: "L2", id: "l2_field" }, 
+                { label: "Resolution", id: "res" }
             ];
             output += `--- ${type} Ticket ---\n`;
             fields.forEach(f => {
