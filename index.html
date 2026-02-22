@@ -96,7 +96,14 @@
                     <div><label>Caller Name</label><input type="text" id="caller" autocomplete="off"></div>
                     <div><label>Account Name</label><input type="text" id="account_name" autocomplete="off"></div>
                     <div><label>BAN-BTN</label><input type="text" id="ban_btn" autocomplete="off"></div>
-                    <div><label>Verification</label><input type="text" id="verified" autocomplete="off"></div>
+                    <div>
+                        <label>Verification:</label>
+                        <div class="quick-text-group" style="margin-bottom: 0px;">
+                            <button type="button" class="qt-btn bool-btn" data-group="verification" onclick="selectBool('verified', 'Yes', this)">Yes</button>
+                            <button type="button" class="qt-btn bool-btn" data-group="verification" onclick="selectBool('verified', 'No', this)">No</button>
+                        </div>
+                        <input type="hidden" id="verified">
+                    </div>
                 </div>
                 <label>Market</label>
                 <div class="quick-text-group">
@@ -160,6 +167,14 @@
                         </div>
                         <input type="hidden" id="o_email_confirmed">
                     </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>Verification:</label>
+                    <div class="quick-text-group" style="margin-bottom: 0px;">
+                        <button type="button" class="qt-btn bool-btn" data-group="o_verification" onclick="selectBool('o_verified', 'Yes', this)">Yes</button>
+                        <button type="button" class="qt-btn bool-btn" data-group="o_verification" onclick="selectBool('o_verified', 'No', this)">No</button>
+                    </div>
+                    <input type="hidden" id="o_verified">
                 </div>
                 <div style="margin-top: 10px;">
                     <label>Issue</label>
@@ -230,7 +245,6 @@
         if (!input.value.startsWith("TF-")) {
             input.value = "TF-" + input.value;
         }
-        // Set cursor to end
         setTimeout(() => {
             input.setSelectionRange(input.value.length, input.value.length);
         }, 0);
@@ -275,6 +289,7 @@
                 { label: "Agent ID", id: "o_agent_id" }, { label: "Customer", id: "o_customer" },
                 { label: "Contact", id: "o_contact" }, { label: "Account", id: "o_account" },
                 { label: "Email & Address Confirmed", id: "o_email_confirmed" }, 
+                { label: "Verified", id: "o_verified" }, 
                 { label: "Issue", id: "o_issue" }, { label: "Notes", id: "o_notes" },
                 { label: "L2", id: "o_l2" }, { label: "ATS", id: "o_ats" },
                 { label: "Resolution", id: "o_res" }, { label: "Branded Call/Survey Offered", id: "o_survey" }
@@ -324,7 +339,7 @@
         document.getElementById("ticketForm").reset();
         document.getElementById("ts_steps").value = "1. ";
         document.getElementById("o_notes").value = "1. ";
-        ["branded_call", "o_email_confirmed", "o_survey"].forEach(id => document.getElementById(id).value = "");
+        ["branded_call", "o_email_confirmed", "o_survey", "verified", "o_verified"].forEach(id => document.getElementById(id).value = "");
         document.querySelectorAll('.bool-btn').forEach(b => b.classList.remove('active'));
         document.getElementById("output_field").value = "";
         document.getElementById('l2_container').classList.add('hidden');
