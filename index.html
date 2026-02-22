@@ -114,10 +114,19 @@
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Dispatched')">Dispatched</button>
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Update Escalation')">Update Esc</button>
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Transfer to Sup')">Transfer to Sup</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Cognito Sent')">Cognito Sent</button>
+                    <button type="button" class="qt-btn" onclick="handleCognito()">Cognito Sent</button>
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Dropped/Ghost/Dead Air')">Dropped/Ghost/Dead</button>
                 </div>
                 <input type="text" id="res" autocomplete="off">
+                
+                <div style="margin-top: 10px;">
+                    <label>Branded Call:</label>
+                    <div class="quick-text-group">
+                        <button type="button" class="qt-btn" onclick="quickSet('branded_call', 'Yes')">Yes</button>
+                        <button type="button" class="qt-btn" onclick="quickSet('branded_call', 'No')">No</button>
+                    </div>
+                    <input type="text" id="branded_call" readonly>
+                </div>
             </div>
 
             <div id="omniaFields" class="common" style="display:none;">
@@ -194,6 +203,13 @@
         document.getElementById(id).value = val;
     }
 
+    function handleCognito() {
+        quickSet('res', 'Cognito Sent (24-48 hours)');
+        setTimeout(() => {
+            alert("Did you advise the customer of the 24-48 hour time frame?");
+        }, 100);
+    }
+
     function generateAndCopy() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         let output = "";
@@ -219,14 +235,14 @@
                 { label: "BAN-BTN", id: "ban_btn" }, { label: "Verified", id: "verified" },
                 { label: "Market", id: "market" }, { label: "Issue", id: "issue" }, 
                 { label: "TS Steps", id: "ts_steps" }, { label: "L2", id: "l2_field" }, 
-                { label: "Resolution", id: "res" }
+                { label: "Resolution", id: "res" }, { label: "Branded Call", id: "branded_call" }
             ];
             output += `--- ${type} Ticket ---\n`;
             fields.forEach(f => {
                 const val = document.getElementById(f.id).value;
                 if (val.trim() !== "" && val !== "1. ") {
                     if (f.label === "TS Steps") output += `\nTS Steps:\n${val}\n`;
-                    else if (f.label === "Resolution" || f.label === "L2") output += `\n${f.label}: ${val}`;
+                    else if (f.label === "Resolution" || f.label === "L2" || f.label === "Branded Call") output += `\n${f.label}: ${val}`;
                     else output += `${f.label}: ${val}\n`;
                 }
             });
@@ -249,6 +265,7 @@
         document.getElementById("o_email_confirmed").value = "";
         document.getElementById("o_res").value = "";
         document.getElementById("o_survey").value = "";
+        document.getElementById("branded_call").value = "";
         document.getElementById("output_field").value = "";
         const aid = localStorage.getItem('persistentAgentID');
         if (aid) document.getElementById('o_agent_id').value = aid;
