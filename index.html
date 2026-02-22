@@ -20,20 +20,12 @@
         user-select: none;
     }
 
-    /* Privacy Blur Effect */
-    .privacy-mode input:not(:focus):not(:hover), 
-    .privacy-mode textarea:not(:focus):not(:hover) {
-        filter: blur(4px);
-        transition: filter 0.2s;
-    }
-
     .container { display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--secure); padding-bottom: 10px; }
     h1 { font-size: 18px; margin: 0; display: flex; align-items: center; gap: 8px; }
     
     .header-btns { display: flex; gap: 8px; }
     .header-btn { cursor: pointer; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 11px; font-weight: bold; }
-    .secure-toggle { border-color: var(--secure); color: var(--secure); }
 
     .scrollable-content { flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
     .type-selector { margin-bottom: 15px; display: flex; gap: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--input-border); }
@@ -49,13 +41,6 @@
     .row-4 { display: flex; gap: 15px; width: 100%; }
     .row-4 > div { flex: 1; }
 
-    .quick-text-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-    .qt-btn { 
-        padding: 5px 12px; font-size: 11px; cursor: pointer; border-radius: 6px;
-        border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text);
-    }
-    .qt-btn:hover { background: var(--accent); color: white; }
-
     .preview-area { border-top: 1px solid var(--preview-border); padding-top: 15px; background: var(--bg); }
     #output_field { height: 60px; font-family: monospace; font-size: 12px; background: var(--header-bg); }
 
@@ -67,13 +52,12 @@
 </style>
 </head>
 
-<body oncontextmenu="return false;" class="privacy-mode" id="mainBody">
+<body oncontextmenu="return false;">
 
 <div class="container">
     <header>
         <h1>🛡️ Support Ticket Pro <small style="font-size: 10px; color: var(--secure);">SECURE SESSION</small></h1>
         <div class="header-btns">
-            <button class="header-btn secure-toggle" onclick="togglePrivacy()" id="privacyBtn">🔓 Disable Privacy Blur</button>
             <button class="header-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
         </div>
     </header>
@@ -146,24 +130,16 @@
         window.resizeTo(800, 800);
         const savedTheme = localStorage.getItem("theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
+        if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light Mode";
         
-        // Only load non-sensitive Agent ID
         const savedAgentID = localStorage.getItem('persistentAgentID');
         if (savedAgentID) document.getElementById('o_agent_id').value = savedAgentID;
     };
-
-    function togglePrivacy() {
-        const body = document.getElementById('mainBody');
-        const btn = document.getElementById('privacyBtn');
-        body.classList.toggle('privacy-mode');
-        btn.innerText = body.classList.contains('privacy-mode') ? "🔓 Disable Privacy Blur" : "🔒 Enable Privacy Blur";
-    }
 
     function generateAndCopy() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         let output = "";
         
-        // Data Extraction Logic
         if (type === "Omnia") {
             const fields = [
                 { label: "Agent ID", id: "o_agent_id" }, { label: "Customer", id: "o_customer" },
@@ -193,16 +169,18 @@
         document.getElementById("output_field").value = output.trim();
         navigator.clipboard.writeText(output.trim()).then(() => {
             const btn = document.querySelector('.copy-btn');
-            btn.innerText = "COPIED & WIPED!";
             
-            // SECURITY: Persistence of Agent ID before wipe
+            // Save Persistent data
             localStorage.setItem('persistentAgentID', document.getElementById('o_agent_id').value);
             
-            // SECURITY: Wipe PII fields after 2 seconds to ensure user saw the preview
+            // Wipe Instantly
+            resetForm();
+            
+            // Feedback
+            btn.innerText = "COPIED & WIPED!";
             setTimeout(() => {
-                resetForm();
                 btn.innerText = "COPY & SECURE SESSION";
-            }, 2000);
+            }, 1000);
         });
     }
 
@@ -237,6 +215,7 @@
         const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
         document.documentElement.setAttribute("data-theme", theme);
         localStorage.setItem("theme", theme);
+        document.getElementById("themeBtn").innerText = theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
     }
 
     function toggleLayout() {
