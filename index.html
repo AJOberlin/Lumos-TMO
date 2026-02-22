@@ -87,6 +87,11 @@
     <form id="ticketForm" onsubmit="return false;">
         <div class="scrollable-content">
             <div id="standardFields" class="common">
+                <div id="tmo_exclusive" class="row-4 hidden">
+                    <div><label>TMO T1 Agent Name</label><input type="text" id="tmo_agent" autocomplete="off"></div>
+                    <div><label>TMO TF #</label><input type="text" id="tmo_tf" autocomplete="off"></div>
+                </div>
+
                 <div class="row-4">
                     <div><label>Caller Name</label><input type="text" id="caller" autocomplete="off"></div>
                     <div><label>Account Name</label><input type="text" id="account_name" autocomplete="off"></div>
@@ -125,12 +130,10 @@
                     <button type="button" class="qt-btn" onclick="setRes('Dropped/Ghost/Dead Air')">Dropped/Ghost/Dead</button>
                 </div>
                 <input type="text" id="res" autocomplete="off">
-
                 <div id="l2_container" class="hidden">
                     <label>L2:</label>
                     <input type="text" id="l2_field" autocomplete="off">
                 </div>
-                
                 <div style="margin-top: 10px;">
                     <label>Branded Call:</label>
                     <div class="quick-text-group">
@@ -157,6 +160,18 @@
                         </div>
                         <input type="hidden" id="o_email_confirmed">
                     </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>Issue</label>
+                    <div class="quick-text-group">
+                        <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDF-No Data Flow')">NDF</button>
+                        <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'NDT-No Dial Tone')">NDT</button>
+                        <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Slow Speeds')">Slow</button>
+                        <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Intermittent Connection')">Intermittent</button>
+                        <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Phone')">Phone</button>
+                        <button type="button" class="qt-btn" onclick="quickSet('o_issue', 'Billing/CS')">Billing/CS</button>
+                    </div>
+                    <input type="text" id="o_issue" autocomplete="off">
                 </div>
                 <label style="margin-top: 10px;">Notes</label>
                 <textarea id="o_notes" rows="8" onkeydown="autoList(event, this)">1. </textarea>
@@ -249,7 +264,8 @@
             const fields = [
                 { label: "Agent ID", id: "o_agent_id" }, { label: "Customer", id: "o_customer" },
                 { label: "Contact", id: "o_contact" }, { label: "Account", id: "o_account" },
-                { label: "Email & Address Confirmed", id: "o_email_confirmed" }, { label: "Notes", id: "o_notes" },
+                { label: "Email & Address Confirmed", id: "o_email_confirmed" }, 
+                { label: "Issue", id: "o_issue" }, { label: "Notes", id: "o_notes" },
                 { label: "L2", id: "o_l2" }, { label: "ATS", id: "o_ats" },
                 { label: "Resolution", id: "o_res" }, { label: "Branded Call/Survey Offered", id: "o_survey" }
             ];
@@ -262,6 +278,8 @@
             });
         } else {
             const fields = [
+                { label: "T1 Agent", id: "tmo_agent" },
+                { label: "TF #", id: "tmo_tf" },
                 { label: "Caller", id: "caller" }, { label: "Account", id: "account_name" },
                 { label: "BAN-BTN", id: "ban_btn" }, { label: "Verified", id: "verified" },
                 { label: "Market", id: "market" }, { label: "Issue", id: "issue" }, 
@@ -271,7 +289,10 @@
             output += `--- ${type} Ticket ---\n`;
             fields.forEach(f => {
                 const val = document.getElementById(f.id).value;
+                // Only include TMO fields if they aren't hidden
+                if ((f.id === "tmo_agent" || f.id === "tmo_tf") && type !== "TMO") return;
                 if (f.id === "l2_field" && document.getElementById('l2_container').classList.contains('hidden')) return;
+                
                 if (val.trim() !== "" && val !== "1. ") {
                     if (f.label === "TS Steps") output += `\nTS Steps:\n${val}\n`;
                     else if (f.label === "Resolution" || f.label === "L2" || f.label === "Branded Call") output += `\n${f.label}: ${val}`;
@@ -329,8 +350,23 @@
 
     function toggleLayout() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
+        
+        // Handle Lumos/TMO side
         document.getElementById("standardFields").style.display = (type === "Omnia") ? "none" : "block";
+        
+        // Handle TMO exclusive fields
+        const tmoEx = document.getElementById("tmo_exclusive");
+        if (type === "TMO") {
+            tmoEx.classList.remove("hidden");
+        } else {
+            tmoEx.classList.add("hidden");
+            document.getElementById("tmo_agent").value = "";
+            document.getElementById("tmo_tf").value = "";
+        }
+
+        // Handle Omnia side
         document.getElementById("omniaFields").style.display = (type === "Omnia") ? "block" : "none";
+        
         document.getElementById("output_field").value = ""; 
     }
 </script>
