@@ -7,7 +7,7 @@
 <style>
     :root {
         --bg: #ffffff; --text: #333; --input-bg: #fff; --input-border: #ccc;
-        --header-bg: #f8f9fa; --preview-border: #ddd; --accent: #1a73e8;
+        --header-bg: #f8f9fa; --preview-border: #ddd; --accent: #1a73e8; --save: #fbbc04;
     }
     [data-theme="dark"] {
         --bg: #1e1e1e; --text: #e0e0e0; --input-bg: #2d2d2d;
@@ -17,14 +17,16 @@
     html, body {
         height: 100%; margin: 0; font-family: sans-serif; 
         font-size: 14px; overflow: hidden; background-color: var(--bg); color: var(--text);
-        user-select: none; /* Deter simple text copying of the UI itself */
+        user-select: none;
     }
 
     .container { display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box; }
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     h1 { font-size: 20px; margin: 0; }
     
-    .theme-switch { cursor: pointer; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 12px; }
+    .header-btns { display: flex; gap: 8px; }
+    .header-btn { cursor: pointer; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--input-border); background: var(--header-bg); color: var(--text); font-size: 11px; font-weight: bold; }
+    .save-btn { border-color: var(--save); color: var(--save); }
 
     .scrollable-content { flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 15px; }
     .type-selector { margin-bottom: 15px; display: flex; gap: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--input-border); font-size: 15px; }
@@ -34,7 +36,7 @@
         width: 100%; padding: 10px; margin-bottom: 12px; box-sizing: border-box;
         border: 1px solid var(--input-border); border-radius: 6px;
         background-color: var(--input-bg); color: var(--text);
-        font-size: 14px; user-select: text; /* Allow text selection inside inputs */
+        font-size: 14px; user-select: text;
     }
 
     .row-4 { display: flex; gap: 15px; width: 100%; }
@@ -48,20 +50,26 @@
     .qt-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(26, 115, 232, 0.1); }
 
     .preview-area { border-top: 1px solid var(--preview-border); padding-top: 15px; background: var(--bg); }
-    #output_field { height: 100px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 12px; background: var(--header-bg); }
+    #output_field { height: 80px; font-family: 'Courier New', monospace; font-size: 13px; margin-bottom: 12px; background: var(--header-bg); }
 
     .btn-group { display: flex; gap: 12px; }
     .copy-btn { flex: 3; padding: 15px; background: #1e8e3e; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; }
     .clear-btn { flex: 1; padding: 15px; background: #d93025; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; }
 
-    footer { text-align: center; font-size: 10px; opacity: 0.5; padding-top: 10px; border-top: 1px solid transparent; }
+    footer { display: flex; justify-content: space-between; font-size: 10px; opacity: 0.5; padding-top: 10px; }
 </style>
 </head>
 
-<body oncontextmenu="return false;"> <div class="container">
+<body oncontextmenu="return false;">
+
+<div class="container">
     <header>
         <h1>Support Ticket Pro</h1>
-        <button class="theme-switch" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
+        <div class="header-btns">
+            <button class="header-btn save-btn" onclick="saveDraft()">💾 Save Draft</button>
+            <button class="header-btn" onclick="loadDraft()">📂 Load Draft</button>
+            <button class="header-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark Mode</button>
+        </div>
     </header>
 
     <div class="type-selector">
@@ -79,66 +87,64 @@
                     <div><label>BAN-BTN</label><input type="text" id="ban_btn"></div>
                     <div><label>Verification</label><input type="text" id="verified"></div>
                 </div>
-
                 <label>Issue Category</label>
                 <div class="quick-text-group">
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDF- No Data Flow')">NDF</button>
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'NDT- No Dial Tone')">NDT</button>
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'Slow Speeds')">Slow</button>
                     <button type="button" class="qt-btn" onclick="quickSet('issue', 'Billing/CS')">Billing</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('issue', 'Other: ')">Other</button>
                 </div>
                 <input type="text" id="issue" placeholder="Details of the issue...">
-
                 <label>Troubleshooting Steps Taken</label>
                 <textarea id="ts_steps" rows="6" onkeydown="autoList(event, this)">1. </textarea>
-
                 <label>L2:</label>
                 <input type="text" id="l2_field" placeholder="Level 2 Details...">
-
                 <label>Final Resolution</label>
                 <div class="quick-text-group">
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'FCR')">FCR</button>
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Dropped/Ghost/Dead Air')">Dropped/Ghost</button>
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Cognito form')">Cognito</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Update Escalation')">Update Esc</button>
-                    <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to Sup')">Esc to Sup</button>
                     <button type="button" class="qt-btn" onclick="quickSet('res', 'Escalated to T2')">T2</button>
                 </div>
                 <input type="text" id="res" placeholder="Outcome of the call...">
             </div>
 
             <div id="omniaFields" class="common" style="display:none;">
-                <label>Agent ID</label>
-                <input type="text" id="o_agent_id" value="500842">
-                <label>Issue Description</label>
-                <input type="text" id="o_issue">
-                <label>Call Notes & Resolution</label>
-                <textarea id="o_notes" rows="12" onkeydown="autoList(event, this)">Resolution: &#10;1. </textarea>
+                <div class="row-4">
+                    <div><label>Agent ID</label><input type="text" id="o_agent_id" value=""></div>
+                    <div><label>Customer</label><input type="text" id="o_customer"></div>
+                    <div><label>Contact</label><input type="text" id="o_contact"></div>
+                </div>
+                <div class="row-4" style="margin-top: 10px;">
+                    <div><label>Account</label><input type="text" id="o_account"></div>
+                    <div><label>Email-Address</label><input type="text" id="o_email"></div>
+                </div>
+                <label style="margin-top: 10px;">Notes</label>
+                <textarea id="o_notes" rows="8" onkeydown="autoList(event, this)">1. </textarea>
+                <div class="row-4">
+                    <div><label>L2:</label><input type="text" id="o_l2"></div>
+                    <div><label>ATS:</label><input type="text" id="o_ats"></div>
+                </div>
             </div>
         </div>
     </form>
 
     <div class="preview-area">
-        <textarea id="output_field" readonly placeholder="Click 'Copy' to generate..."></textarea>
+        <textarea id="output_field" readonly placeholder="Copy preview will generate here..."></textarea>
         <div class="btn-group">
             <button type="button" class="copy-btn" onclick="generateAndCopy()">COPY TO CLIPBOARD</button>
             <button type="button" class="clear-btn" onclick="resetForm()">CLEAR ALL</button>
         </div>
         <footer>
-            &copy; 2026 Aaron Mata Abrego. All Rights Reserved. Private Internal Tool.
+            <span>&copy; 2026 Aaron Mata Abrego. All Rights Reserved.</span>
+            <span id="autoSaveLabel">Auto-save: Ready</span>
         </footer>
     </div>
 </div>
 
 <script>
-    // Security: Block DevTools and Source Shortcuts
     document.onkeydown = function(e) {
-        if (e.keyCode == 123 || 
-           (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || 
-           (e.ctrlKey && e.keyCode == 85)) {
-            return false;
-        }
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
     };
 
     window.onload = () => {
@@ -146,7 +152,48 @@
         const savedTheme = localStorage.getItem("theme") || "light";
         document.documentElement.setAttribute("data-theme", savedTheme);
         if (savedTheme === "dark") document.getElementById("themeBtn").innerText = "☀️ Light Mode";
+        
+        const savedAgentID = localStorage.getItem('persistentAgentID');
+        if (savedAgentID) {
+            document.getElementById('o_agent_id').value = savedAgentID;
+        }
+
+        setInterval(autoSave, 30000);
     };
+
+    function saveDraft() {
+        const formData = {};
+        const inputs = document.querySelectorAll('input[type="text"], textarea');
+        inputs.forEach(input => formData[input.id] = input.value);
+        localStorage.setItem('ticketDraft', JSON.stringify(formData));
+        localStorage.setItem('persistentAgentID', document.getElementById('o_agent_id').value);
+        
+        const sBtn = document.querySelector('.save-btn');
+        sBtn.innerText = "✅ Saved!";
+        setTimeout(() => { sBtn.innerText = "💾 Save Draft"; }, 1500);
+    }
+
+    function autoSave() {
+        const formData = {};
+        const inputs = document.querySelectorAll('input[type="text"], textarea');
+        inputs.forEach(input => formData[input.id] = input.value);
+        localStorage.setItem('ticketDraft', JSON.stringify(formData));
+        localStorage.setItem('persistentAgentID', document.getElementById('o_agent_id').value);
+        
+        const now = new Date();
+        document.getElementById('autoSaveLabel').innerText = "Last Auto-saved: " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function loadDraft() {
+        const data = localStorage.getItem('ticketDraft');
+        if (data) {
+            const formData = JSON.parse(data);
+            for (const id in formData) {
+                const el = document.getElementById(id);
+                if (el) el.value = formData[id];
+            }
+        }
+    }
 
     function autoList(event, textarea) {
         if (event.key === 'Enter') {
@@ -155,7 +202,6 @@
             const lines = textBeforeCursor.split('\n');
             const lastLine = lines[lines.length - 1];
             const match = lastLine.match(/^(\d+)\.\s/);
-            
             if (match) {
                 event.preventDefault();
                 const nextNumber = parseInt(match[1]) + 1;
@@ -167,9 +213,7 @@
         }
     }
 
-    function quickSet(id, val) {
-        document.getElementById(id).value = val;
-    }
+    function quickSet(id, val) { document.getElementById(id).value = val; }
 
     function toggleTheme() {
         const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -188,50 +232,41 @@
     function generateAndCopy() {
         const type = document.querySelector('input[name="ticketType"]:checked').value;
         let output = "";
-
         if (type === "Omnia") {
             output += "--- Omnia Ticket ---\n";
             const fields = [
-                { label: "Agent ID", value: document.getElementById("o_agent_id").value },
-                { label: "Issue", value: document.getElementById("o_issue").value },
-                { label: "Notes", value: document.getElementById("o_notes").value }
+                { label: "Agent ID", id: "o_agent_id" }, { label: "Customer", id: "o_customer" },
+                { label: "Contact", id: "o_contact" }, { label: "Account", id: "o_account" },
+                { label: "Email", id: "o_email" }, { label: "Notes", id: "o_notes" },
+                { label: "L2", id: "o_l2" }, { label: "ATS", id: "o_ats" }
             ];
             fields.forEach(f => {
-                if (f.value.trim() !== "" && f.value !== "1. ") output += `${f.label}: ${f.value}\n`;
+                const val = document.getElementById(f.id).value;
+                if (val.trim() !== "" && val !== "1. ") {
+                   output += (f.label === "Notes") ? `\nNotes:\n${val}\n` : `${f.label}: ${val}\n`;
+                }
             });
         } else {
             output += `--- ${type} Ticket ---\n`;
             const fields = [
-                { label: "Caller", value: document.getElementById("caller").value },
-                { label: "Account", value: document.getElementById("account_name").value },
-                { label: "BAN-BTN", value: document.getElementById("ban_btn").value },
-                { label: "Verified", value: document.getElementById("verified").value },
-                { label: "Issue", value: document.getElementById("issue").value },
-                { label: "TS Steps", value: document.getElementById("ts_steps").value },
-                { label: "L2", value: document.getElementById("l2_field").value },
-                { label: "Resolution", value: document.getElementById("res").value }
+                { label: "Caller", id: "caller" }, { label: "Account", id: "account_name" },
+                { label: "BAN-BTN", id: "ban_btn" }, { label: "Verified", id: "verified" },
+                { label: "Issue", id: "issue" }, { label: "TS Steps", id: "ts_steps" },
+                { label: "L2", id: "l2_field" }, { label: "Resolution", id: "res" }
             ];
-
             fields.forEach(f => {
-                if (f.value.trim() !== "" && f.value !== "1. ") {
-                    if (f.label === "TS Steps") {
-                        output += `\nTS Steps:\n${f.value}\n`;
-                    } else if (f.label === "Resolution" || f.label === "L2") {
-                        output += `\n${f.label}: ${f.value}`;
-                    } else {
-                        output += `${f.label}: ${f.value}\n`;
-                    }
+                const val = document.getElementById(f.id).value;
+                if (val.trim() !== "" && val !== "1. ") {
+                    if (f.label === "TS Steps") output += `\nTS Steps:\n${val}\n`;
+                    else if (f.label === "Resolution" || f.label === "L2") output += `\n${f.label}: ${val}`;
+                    else output += `${f.label}: ${val}\n`;
                 }
             });
         }
-
-        const previewBox = document.getElementById("output_field");
-        previewBox.value = output.trim();
-
+        document.getElementById("output_field").value = output.trim();
         navigator.clipboard.writeText(output.trim()).then(() => {
             const btn = document.querySelector('.copy-btn');
-            const old = btn.innerText; 
-            btn.innerText = "COPIED SUCCESSFULLY!";
+            const old = btn.innerText; btn.innerText = "COPIED SUCCESSFULLY!";
             setTimeout(() => { btn.innerText = old; }, 1500);
         });
     }
@@ -239,8 +274,9 @@
     function resetForm() {
         document.getElementById("ticketForm").reset();
         document.getElementById("ts_steps").value = "1. ";
-        document.getElementById("o_notes").value = "Resolution: \n1. ";
-        document.getElementById("o_agent_id").value = "500842";
+        document.getElementById("o_notes").value = "1. ";
+        const savedAgentID = localStorage.getItem('persistentAgentID');
+        document.getElementById("o_agent_id").value = savedAgentID ? savedAgentID : "";
         document.getElementById("output_field").value = ""; 
     }
 </script>
