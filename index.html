@@ -133,7 +133,14 @@
                 </div>
                 <div class="row-4" style="margin-top: 10px;">
                     <div><label>Account</label><input type="text" id="o_account" autocomplete="off"></div>
-                    <div><label>Email-Address</label><input type="text" id="o_email" autocomplete="off"></div>
+                    <div>
+                        <label>Email & Address Confirmed:</label>
+                        <div class="quick-text-group" style="margin-bottom: 0px;">
+                            <button type="button" class="qt-btn" onclick="quickSet('o_email_confirmed', 'Yes')">Yes</button>
+                            <button type="button" class="qt-btn" onclick="quickSet('o_email_confirmed', 'No')">No</button>
+                        </div>
+                        <input type="text" id="o_email_confirmed" readonly placeholder="Confirmed?">
+                    </div>
                 </div>
                 <label style="margin-top: 10px;">Notes</label>
                 <textarea id="o_notes" rows="8" onkeydown="autoList(event, this)">1. </textarea>
@@ -183,7 +190,7 @@
             const fields = [
                 { label: "Agent ID", id: "o_agent_id" }, { label: "Customer", id: "o_customer" },
                 { label: "Contact", id: "o_contact" }, { label: "Account", id: "o_account" },
-                { label: "Email", id: "o_email" }, { label: "Notes", id: "o_notes" },
+                { label: "Email & Address Confirmed", id: "o_email_confirmed" }, { label: "Notes", id: "o_notes" },
                 { label: "L2", id: "o_l2" }, { label: "ATS", id: "o_ats" }
             ];
             output += "--- Omnia Ticket ---\n";
@@ -224,6 +231,7 @@
         document.getElementById("ticketForm").reset();
         document.getElementById("ts_steps").value = "1. ";
         document.getElementById("o_notes").value = "1. ";
+        document.getElementById("o_email_confirmed").value = "";
         document.getElementById("output_field").value = "";
         const aid = localStorage.getItem('persistentAgentID');
         if (aid) document.getElementById('o_agent_id').value = aid;
